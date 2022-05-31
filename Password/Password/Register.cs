@@ -20,62 +20,48 @@ namespace Password
 
         private void button4_Click(object sender, EventArgs e)
         {
-            
-            using (var writer = File.AppendText("text.txt"))
+            var key = "b14ca5898a4e4133bbce2ea2315a1916";
+            FileInfo.fileName = textBox1.Text + ".txt";
+            if (File.Exists(FileInfo.filePath + FileInfo.fileName))
             {
-
-                string ss = textBox1.Text + " " + textBox2.Text + " " + textBox3.Text + " " + textBox4.Text;
-                writer.WriteLine(ss);
-                MessageBox.Show("Sekmingai uzsiregistravote, spauskite EXIT");
-
+                AESFileEncryptor.Decipher();
+                string[] lines = File.ReadAllLines(FileInfo.filePath + FileInfo.fileName);
+                string decryptedPassword = AESTextEncryptor.DecryptString(key, lines[0]); 
+                if(decryptedPassword == textBox2.Text)
+                {
+                    Form1 form1 = new Form1();
+                    form1.Show();
+                    this.Hide();
+                }
+                else
+                {
+                    MessageBox.Show("Neteisingas slaptazodis");
+                    AESFileEncryptor.Cipher();
+                }           
             }
+            else
+            {
+                File.Create(FileInfo.filePath + FileInfo.fileName).Close();
+                string encryptedPassword = AESTextEncryptor.EncryptString(key, textBox2.Text);
+                using (var writer = File.AppendText(FileInfo.fileName))
+                {
+                    writer.WriteLine(encryptedPassword);
+                }
+                Form1 form1 = new Form1();
+                form1.Show();
+                this.Hide();
+                this.Close();
+            }              
         }
 
         private void Register_Load(object sender, EventArgs e)
         {
-            File.Create("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt").Close();
+            
         }
 
         private void button1_Click(object sender, EventArgs e)
         {
-            if (new FileInfo("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt").Length == 0)
-            {
-                File.Delete("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt");
                 System.Windows.Forms.Application.ExitThread();
-            }
-            else
-            {
-
-                var key = "b14ca5898a4e4133bbce2ea2315a1916";
-
-                using (StreamReader file = new StreamReader("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt"))
-                {
-                    int counter = 0;
-                    string ln;
-                    while ((ln = file.ReadLine()) != null)
-                    {
-                        Console.WriteLine(ln);
-                        using (var writer = File.AppendText("temp.txt"))
-                        {
-
-                            writer.WriteLine(Form1.AesOperation.EncryptString(key, ln));
-
-                        }
-                        counter++;
-                    }
-                }
-              
-                try
-                {
-                    File.Copy("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\temp.txt", "C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt", true);
-                    File.WriteAllText("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\temp.txt", String.Empty);
-                }
-                catch (IOException ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-                System.Windows.Forms.Application.ExitThread();
-            }
         }
     }
 }

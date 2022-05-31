@@ -22,9 +22,7 @@ namespace Password
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-              if (File.Exists("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt")) Application.Run(new Form1());
-              else Application.Run(new Register());
-            //Application.Run(new Form1());
+              Application.Run(new Register());
         }
     }
 }

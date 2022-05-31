@@ -23,189 +23,115 @@ namespace Password
             File.WriteAllText("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\temp.txt", String.Empty);
 
             var key = "b14ca5898a4e4133bbce2ea2315a1916";
-            if (File.Exists("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt"))
-            {
-                using (StreamReader file = new StreamReader("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt"))
-                {
-                    int counter = 0;
-                    string ln;
-                    while ((ln = file.ReadLine()) != null)
-                    {
+//                using (StreamReader file = new StreamReader(FileInfo.filePath + FileInfo.fileName))
+//                {
+//                    int counter = 0;
+//                    string ln;
+//                    while ((ln = file.ReadLine()) != null)
+//                    {
                        
-                        using (var writer = File.AppendText("temp.txt"))
-                        {
+//                        using (var writer = File.AppendText("temp.txt"))
+//                        {
 
-                            writer.WriteLine(AesOperation.DecryptString(key, ln));
+//                            //writer.WriteLine(AesOperation.DecryptString(key, ln));
+//                            writer.WriteLine(ln);
 
-                        }
-                        counter++;
-                    }
-                }
+//                        }
+//                        counter++;
+//                    }
+//                }
                
-                try
-{
-                    File.Copy("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\temp.txt", "C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt", true);
-                    File.WriteAllText("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\temp.txt", String.Empty);
-                }
-                    catch (IOException ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-
-
-
-                }
-            else
-            {
-                File.Create("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt");
-            }
+//                try
+//{
+//                    File.Copy("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\temp.txt", FileInfo.filePath + FileInfo.fileName, true);
+//                    //File.WriteAllText("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\temp.txt", String.Empty);
+//                }
+//                    catch (IOException ex)
+//                {
+//                    MessageBox.Show(ex.Message);
+//                }
+      
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
 
         }
-
-        public class AesOperation
-        {
-            public static string EncryptString(string key, string plainText)
-            {
-                byte[] iv = new byte[16];
-                byte[] array;
-
-                using (Aes aes = Aes.Create())
-                {
-                    aes.Key = Encoding.UTF8.GetBytes(key);
-                    aes.IV = iv;
-
-                    ICryptoTransform encryptor = aes.CreateEncryptor(aes.Key, aes.IV);
-
-                    using (MemoryStream memoryStream = new MemoryStream())
-                    {
-                        using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, encryptor, CryptoStreamMode.Write))
-                        {
-                            using (StreamWriter streamWriter = new StreamWriter((Stream)cryptoStream))
-                            {
-                                streamWriter.Write(plainText);
-                            }
-
-                            array = memoryStream.ToArray();
-                        }
-                    }
-                }
-
-                return Convert.ToBase64String(array);
-            }
-
-            public static string DecryptString(string key, string cipherText)
-            {
-                byte[] iv = new byte[16];
-                byte[] buffer = Convert.FromBase64String(cipherText);
-
-                using (Aes aes = Aes.Create())
-                {
-                    aes.Key = Encoding.UTF8.GetBytes(key);
-                    aes.IV = iv;
-                    ICryptoTransform decryptor = aes.CreateDecryptor(aes.Key, aes.IV);
-
-                    using (MemoryStream memoryStream = new MemoryStream(buffer))
-                    {
-                        using (CryptoStream cryptoStream = new CryptoStream((Stream)memoryStream, decryptor, CryptoStreamMode.Read))
-                        {
-                            using (StreamReader streamReader = new StreamReader((Stream)cryptoStream))
-                            {
-                                return streamReader.ReadToEnd();
-                            }
-                        }
-                    }
-                }
-            }
-        }
-    
-
-
     
         private void button3_Click(object sender, EventArgs e)
         {
-
-            var key = "b14ca5898a4e4133bbce2ea2315a1916";
-           
-                using (StreamReader file = new StreamReader("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt"))
-                {
-                    int counter = 0;
-                    string ln;
-                    while ((ln = file.ReadLine()) != null)
-                    {
-                        Console.WriteLine(ln);
-                        using (var writer = File.AppendText("temp.txt"))
-                        {
-
-                            writer.WriteLine(AesOperation.EncryptString(key, ln));
-
-                        }
-                        counter++;
-                    }
-                }
-               
-                try
-                {
-                File.Copy("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\temp.txt", "C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt", true);
-                File.WriteAllText("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\temp.txt", String.Empty);
-            }
-                catch (IOException ex)
-                {
-                    MessageBox.Show(ex.Message);
-                }
-
-
-
-           
-
-
-
-
+            AESFileEncryptor.Cipher();
 
             System.Windows.Forms.Application.ExitThread();
         }
 
         private void button4_Click(object sender, EventArgs e)
         {
+            var key = "b14ca5898a4e4133bbce2ea2315a1916";
+            string passwordEcrypted = AESTextEncryptor.EncryptString(key, textBox2.Text);
 
-
-            using (var writer = File.AppendText("text.txt"))
+            using (var writer = File.AppendText(FileInfo.fileName))
             {
 
-                string ss = textBox1.Text + " " + textBox2.Text + " " + textBox3.Text + " " + textBox4.Text;
+                string ss = textBox1.Text + " " + passwordEcrypted + " " + textBox3.Text + " " + textBox4.Text;
                 writer.WriteLine(ss);
-                MessageBox.Show("Sekmingai uzsiregistravote");
+                MessageBox.Show("Sekmingai pridejote paskyra");
 
             }
         }
 
         private void button5_Click(object sender, EventArgs e)
         {
-            var oldLines = System.IO.File.ReadAllLines("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt");
-            var newLines = oldLines.Where(line => !line.Contains(textBox5.Text));
-            System.IO.File.WriteAllLines("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt", newLines);
-            MessageBox.Show("Ištrynėte paskyrą");
+            foreach (string line in File.ReadAllLines(FileInfo.filePath + FileInfo.fileName))
+            {
+                if (line.Contains(textBox10.Text) && line.Contains(textBox5.Text))
+                {
+                    
+                }
+                else 
+                {
+                    using (var writer = File.AppendText(FileInfo.filePath + "temp.txt"))
+                    {
+                        writer.WriteLine(line);
+                    }
+                }
+            }
+            File.Copy(FileInfo.filePath + "temp.txt", FileInfo.filePath + FileInfo.fileName, true);
+            File.WriteAllText(FileInfo.filePath + "temp.txt", String.Empty);
+            MessageBox.Show("Slaptazodis istrintas");
         }
 
         private void button6_Click(object sender, EventArgs e)
         {
-            string[] lines = File.ReadAllLines("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt");
-            IEnumerable<string> selectLines = lines.Where(line => line.StartsWith(textBox6.Text));
-            foreach (var item in selectLines)
+            Form2 f2 = new Form2();
+            foreach (string line in File.ReadAllLines(FileInfo.filePath + FileInfo.fileName))
             {
-                MessageBox.Show(item);
+                if (line.Contains(textBox6.Text) && line.Contains(textBox9.Text))
+                {
+                    string[] words = line.Split(' ');
+                    f2.password = words[1];
+                    f2.Show();
+                }
             }
         }
 
         private void button7_Click(object sender, EventArgs e)
         {
-            String strFile = File.ReadAllText("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt");
-            strFile = strFile.Replace(textBox8.Text, textBox7.Text);
-            File.WriteAllText("C:\\Users\\bagal\\Desktop\\Password\\Password\\bin\\Debug\\text.txt", strFile);
-            MessageBox.Show("Slaptazodis pakeistas");
+            var key = "b14ca5898a4e4133bbce2ea2315a1916";
+            string newEncryptedPassword = AESTextEncryptor.EncryptString(key, textBox11.Text);
+            foreach (string line in File.ReadAllLines(FileInfo.filePath + FileInfo.fileName))
+            {
+                if (line.Contains(textBox8.Text) && line.Contains(textBox7.Text))
+                {
+                    string[] words = line.Split(' ');
+
+                    String strFile = File.ReadAllText(FileInfo.filePath + FileInfo.fileName);
+                    strFile = strFile.Replace(words[1], newEncryptedPassword);
+                    File.WriteAllText(FileInfo.filePath + FileInfo.fileName, strFile);
+                    MessageBox.Show("Slaptazodis pakeistas");
+                }
+            }
+            
         }
 
         private void label4_Click(object sender, EventArgs e)
@@ -246,6 +172,19 @@ namespace Password
         private void textBox1_TextChanged_1(object sender, EventArgs e)
         {
 
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            int length = 9;
+            const string valid = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ1234567890";
+            StringBuilder res = new StringBuilder();
+            Random rnd = new Random();
+            while (0 < length--)
+            {
+                res.Append(valid[rnd.Next(valid.Length)]);
+            }
+            textBox2.Text = res.ToString();
         }
     }
 }
